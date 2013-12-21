@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
 	App gameInstance;
-	gameInstance.setWindowSize(640, 480);
+	gameInstance.setWindowSize(600, 600);
 	gameInstance.InitApp();
 	gameInstance.EventLoop();
 	gameInstance.Cleanup();

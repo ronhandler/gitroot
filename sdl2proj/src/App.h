@@ -4,11 +4,12 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <SDL.h>
+#include <math.h>
 
 class App
 {
 	protected:
-		int Height, Width;
+		GLfloat Height, Width;
 		SDL_Window* mainWindow;
 		SDL_GLContext mainGLContext;
 		SDL_TimerID timer;
@@ -32,6 +33,7 @@ class App
 		
 		// Event-related functions.
 		void EventLoop(void);
+		void HandleWindowEvents(SDL_Event* event);
 		void HandleUserEvents(SDL_Event* event);
 		
 		// Game related functions.

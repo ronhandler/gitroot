@@ -28,45 +28,42 @@ void App::InitApp(void)
 	
 	// Create a window.
 	InitializeSDL(Width, Height, contextFlags);
-	CreateOrthographicProjection(4.0, 3.0);
+	CreateOrthographicProjection(Width, Height);
 	InstallTimer();
-	
 }
 
 void App::InitializeSDL(int width, int height, int flags)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
-	// Turn on double buffering.
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	
 	// Save the height and width of the windows.
 	Height=height;
 	Width=width;
 
+	SDL_Init(SDL_INIT_EVERYTHING);
+	// Turn on double buffering.
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	
 	// Create the window.
 	mainWindow = SDL_CreateWindow("Proj", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 	mainGLContext = SDL_GL_CreateContext(mainWindow);
 
-
 	if (glewInit() != GLEW_OK) exit(EXIT_FAILURE);
 
-	
-	// Print version numbers.
-	fprintf(stdout,
-			"Versions\n========\nglew:%s\ngl:%s\nvendor:%s\nrenderer:%s\nglsl:%s\n",
-	        glewGetString(GLEW_VERSION),
-	        glGetString(GL_VERSION),
-	        glGetString(GL_VENDOR),
-	        glGetString(GL_RENDERER),
-	        glGetString(GL_SHADING_LANGUAGE_VERSION)
-	        );
-
+	//// Print version numbers.
+	//fprintf(stdout,
+			//"Versions\n========\nglew:%s\ngl:%s\nvendor:%s\nrenderer:%s\nglsl:%s\n",
+			//glewGetString(GLEW_VERSION),
+			//glGetString(GL_VERSION),
+			//glGetString(GL_VENDOR),
+			//glGetString(GL_RENDERER),
+			//glGetString(GL_SHADING_LANGUAGE_VERSION)
+			//);
 }
 
 void App::CreateOrthographicProjection(GLfloat width, GLfloat height)
 {
 	// The projection function.
-	glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+	glLoadIdentity();
+	glOrtho(0, width, 0, height, -1.0, 1.0);
 }
 
 void App::InstallTimer(void)
@@ -108,6 +105,9 @@ void App::EventLoop(void)
 	
 	while((!done) && (SDL_WaitEvent(&event))) {
 		switch(event.type) {
+			case SDL_WINDOWEVENT:
+				HandleWindowEvents(&event);
+				break;
 			case SDL_USEREVENT:
 				HandleUserEvents(&event);
 				break;
@@ -131,6 +131,20 @@ void App::EventLoop(void)
 	}
 }
 
+void App::HandleWindowEvents(SDL_Event* event)
+{
+	switch (event->window.event) {
+		case SDL_WINDOWEVENT_RESIZED:
+			Width = event->window.data1;
+			Height = event->window.data2;
+			glViewport(0,0,Width,Height);
+			CreateOrthographicProjection(Width,Height);
+			break;
+		default:
+			break;
+	}
+}
+
 void App::HandleUserEvents(SDL_Event* event)
 {
 	switch (event->user.code) {
@@ -151,9 +165,15 @@ void App::GameLoop(void)
 
 void App::RenderFrame(void) 
 {
+	//GLfloat length = sqrt((pow(Width,2))+(pow(Height,2)));
+	GLfloat x,y;
+	GLfloat size = 4;
+	x = Width/size;
+	y = Height/size;
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
-	glRectf(1.0, 1.0, 3.0, 2.0);
+	glRectf(x,y,Width-x,Height-y);
 	SDL_GL_SwapWindow(mainWindow);
 }
 
