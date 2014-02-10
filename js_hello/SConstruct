@@ -1,0 +1,2 @@
+# This SConstruct file basically invokes src/SConsript sciprt.
+SConscript('src/SConscript', variant_dir='obj', duplicate=0)
