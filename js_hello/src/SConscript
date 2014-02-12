@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # This is a SCons script that builds a C++ project.
 
 import os
