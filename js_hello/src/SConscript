@@ -1,0 +1,47 @@
+# This is a SCons script that builds a C++ project.
+
+import os
+
+env = Environment(ENV=os.environ)
+Tool('g++')(env)
+
+build_filename = '../build/a.out'
+
+sources = [
+	Glob('*.cpp')		# Add all cpp files.
+]
+
+# Change the default g++ executable to mingw-w64's version.
+#env.Replace(CXX = "x86_64-w64-mingw32-g++") 
+
+env.Append(CCFLAGS=[
+	'-Wall',
+	'-g',
+	'-std=c++11'
+])
+
+env.Append(CPPPATH = [
+#	'/mingw64/include',
+#	'/mingw64/x86_64-w64-mingw32/include'
+])
+
+env.Append(LIBS = [
+	'v8'
+])
+
+env.Append(LIBPATH = [
+#	'/mingw64/lib',
+#	'/mingw64/x86_64-w64-mingw32/lib'
+])
+
+# Parse the -mwindows flag to remove the annoying console window.
+#env.MergeFlags('-mwindows')
+
+env.Append(LINKFLAGS=[
+	#'-static',
+#	'-static-libgcc',
+#	'-static-libstdc++'
+])
+
+env.Program(target = build_filename, source = sources)
+
