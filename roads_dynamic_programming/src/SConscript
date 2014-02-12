@@ -1,9 +1,11 @@
+#!/usr/bin/python
 # This is a SCons script that builds a C++ project.
 
 import os
 
 env = Environment(ENV=os.environ)
 Tool('mingw')(env)
+
 
 build_filename = '../build/temp.exe'
 
