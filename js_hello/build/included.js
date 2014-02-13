@@ -1,2 +1,4 @@
-print("Hello world\n");
-
+{
+	print("Hi...\n");
+	let y=2;
+}

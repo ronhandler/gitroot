@@ -9,12 +9,14 @@ include('build/included.js');
 
 
 function foo() {
-	var y=100;
 	return 10;
 }
 
-f
+(function () {
+	var y=100;
+})()
 
-var str = "The value is: " + 2*foo() + '\n';
+
+var str = "The value is: " + y*foo() + '\n';
 print(str);
 

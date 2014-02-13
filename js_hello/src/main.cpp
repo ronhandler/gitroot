@@ -25,6 +25,9 @@ static Handle<Value> Include(const Arguments& args)
 	if(jsfile.length() > 0) {
 		Handle<String> source = String::New(jsfile.c_str());
 		Handle<Script> script = Script::Compile(source, String::New(string(*param1).c_str()));
+		if (script.IsEmpty()) {
+			return Undefined();
+		}
 		return script->Run();
 	}
 
@@ -75,6 +78,12 @@ int main(int argc, char* argv[]) {
 		// Compile the Javascript code.
 		Handle<Script> script = Script::Compile(source, String::New(src_fname.c_str()));
 		
+		if (script.IsEmpty()) {
+			//cerr << src_str << endl;
+			context.Dispose();
+			throw(-2);
+		}
+
 		// Run the script to get the result.
 		Handle<Value> result = script->Run();
 		
@@ -97,9 +106,15 @@ int main(int argc, char* argv[]) {
 		//printf("%s\n", *ascii);
 
 	}
-	catch (...) {
-		cerr << "Error reading file. Aborting." << endl;
-		return -1;
+	catch (int &i) {
+		if (i==-1) {
+			cerr << "Error reading file. Aborting." << endl;
+			return i;
+		} else
+		if (i==-2) {
+			cerr << "Error compiling script file. Aborting." << endl;
+			return i;
+		}
 	}
 
 	return 0;
