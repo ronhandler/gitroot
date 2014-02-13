@@ -24,7 +24,7 @@ static Handle<Value> Include(const Arguments& args)
 
 	if(jsfile.length() > 0) {
 		Handle<String> source = String::New(jsfile.c_str());
-		Handle<Script> script = Script::Compile(source);
+		Handle<Script> script = Script::Compile(source, String::New(string(*param1).c_str()));
 		return script->Run();
 	}
 
@@ -46,10 +46,11 @@ static Handle<Value> Print(const Arguments& args)
 
 int main(int argc, char* argv[]) {
 
-	// Read a script file into src_str.
-	string src_str;
 	try {
-		src_str = readfile("build/script.js");
+		// Read a script file into src_str.
+		string src_fname,src_str;
+		src_fname = "build/script.js";
+		src_str = readfile(src_fname.c_str());
 
 		// Create a stack-allocated handle scope.
 		HandleScope handle_scope;
@@ -62,25 +63,37 @@ int main(int argc, char* argv[]) {
 		// Create a new context.
 		Persistent<Context> context = Context::New(0, global_templ);
 		
-		// Enter the created context for compiling and
-		// running the hello world program.
+		// Enter the created context for compiling and running our program.
 		context->Enter();
-		
-		// Create a string containing the JavaScript code
-		// to execute (notice the quotation).
+
+		// Catch exceptions.
+		TryCatch trycatch;
+
+		// Create a string containing the JavaScript code to execute.
 		Handle<String> source = String::New(src_str.c_str());
 		
 		// Compile the Javascript code.
-		Handle<Script> script = Script::Compile(source);
+		Handle<Script> script = Script::Compile(source, String::New(src_fname.c_str()));
 		
 		// Run the script to get the result.
 		Handle<Value> result = script->Run();
 		
+		// Check for errors.
+		if (result.IsEmpty()) {
+			Handle<Message> message = trycatch.Message();
+			int linenum = message->GetLineNumber();
+			cerr << 
+					*String::AsciiValue(message->GetScriptResourceName()) << ":" <<
+					linenum << ":" <<
+					*String::AsciiValue(trycatch.Exception()) << ":" <<
+					endl;
+		}
+		
 		// Get rid of the persistent context.
 		context.Dispose();
-		
+
 		// Convert the result to an ASCII string and print it.
-		String::AsciiValue ascii(result);
+		//String::AsciiValue ascii(result);
 		//printf("%s\n", *ascii);
 
 	}
