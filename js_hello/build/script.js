@@ -7,16 +7,10 @@
 // Include another js sciprt.
 include('build/included.js');
 
-
-function foo() {
-	return 10;
+function dbl(x) {
+	return 2*x;
 }
 
-(function () {
-	var y=100;
-})()
-
-
-var str = "The value is: " + y*foo() + '\n';
+var str = "The value is: " + dbl(3) + '\n';
 print(str);
 
