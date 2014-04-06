@@ -34,7 +34,8 @@ env.Append(LIBPATH = [
 	#'/mingw64/x86_64-w64-mingw32/lib'
 ])
 
-env.ParseConfig('sdl2-config --cflags --libs')
+#env.ParseConfig('sdl2-config --cflags --libs')
+env.ParseConfig('pkg-config gtkmm-3.0 cairomm-1.0 --cflags --libs')
 
 # Parse the -mwindows flag to remove the annoying console window.
 #env.MergeFlags('-mwindows')

@@ -4,5 +4,8 @@
 #include <iostream>
 using namespace std;
 
+#include <gtkmm.h>
+#include <cairomm/cairomm.h>
+
 #endif
 

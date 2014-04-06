@@ -41,9 +41,9 @@ public:
 		}
 	}
 	void func() {
-		currblock = blockFactory.createBlock("J");
-		currblock->x=5;
-		currblock->y=5;
+		currblock = blockFactory.createBlock("L");
+		currblock->x=7;
+		currblock->y=2;
 	}
 };
 
