@@ -1,0 +1,44 @@
+# This is a SCons script that builds a C++ project.
+
+import os
+
+env = Environment(ENV=os.environ)
+
+build_filename = '../build/a.out'
+
+sources = [
+	Glob('*.c'),		# Add all cpp files.
+]
+
+# Change the default g++ executable to mingw-w64's version.
+#env.Replace(CXX = "x86_64-w64-mingw32-g++") 
+
+env.Append(CCFLAGS=[
+	'-Wall',
+	'-g'
+])
+
+env.Append(CPPPATH = [
+	#'/mingw64/include',
+	#'/mingw64/x86_64-w64-mingw32/include'
+])
+
+env.Append(LIBS = [
+	#'-lglew32',
+	#'-lopengl32',
+	#'-lglu32'
+])
+
+env.Append(LIBPATH = [
+	#'/mingw64/lib',
+	#'/mingw64/x86_64-w64-mingw32/lib'
+])
+
+env.Append(LINKFLAGS=[
+	#'-static',
+	#'-static-libgcc',
+	#'-static-libstdc++'
+])
+
+env.Program(target = build_filename, source = sources)
+
