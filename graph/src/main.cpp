@@ -1,24 +1,17 @@
 #include "main.h"
 
-class MyArea : public Gtk::DrawingArea
-{
-	public:
-		MyArea();
-		virtual ~MyArea();
-
-	protected:
-		Cairo::RefPtr<Cairo::ToyFontFace> font;
-		//Override default signal handler:
-		virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-		void line(const Cairo::RefPtr<Cairo::Context>& cr,
-				double x1, double y1, double x2, double y2, double weight);
-};
-
 MyArea::MyArea()
 {
 	font = Cairo::ToyFontFace::create("Bitstream Charter",
 									  Cairo::FONT_SLANT_NORMAL,
 									  Cairo::FONT_WEIGHT_BOLD);
+
+	// Create a temporary graph and add some nodes and edges.
+	graph.add(Node(1,Pos(50,40),10) , Node(2,Pos(100,80),10));
+	graph.add(Node(3,Pos(50,80),10) , Node(2,Pos(100,80),10));
+	graph.add(Node(4,Pos(100,160),10) , Node(2,Pos(100,80),10));
+	graph.add(Node(5,Pos(400,350),10) , Node(6,Pos(500,400),10));
+	graph.add(Node(3,Pos(400,350),10) , Node(6,Pos(500,400),10));
 
 }
 
@@ -26,9 +19,37 @@ MyArea::~MyArea()
 {
 }
 
+void MyArea::drawGraph(const Cairo::RefPtr<Cairo::Context>& cr, Graph g) {
+	std::map< int, Node >::iterator it;
+	for (it = g.nodes.begin(); it!=g.nodes.end(); it++) {
+		std::list<Node * >::iterator iter;
+		for (iter = it->second.edges.begin(); iter!=it->second.edges.end(); ++iter) {
+			Node *n = *iter;
+			line(cr, it->second.pos.x, it->second.pos.y, n->pos.x, n->pos.y, n->weight);
+		}
+	}
+	cr->set_line_width(2.0);
+	for (it = g.nodes.begin(); it!=g.nodes.end(); it++) {
+		cr->set_source_rgba(0.0, 0.0, 0.8, 1.0);    // partially translucent
+		cr->move_to(it->second.pos.x, it->second.pos.y);
+		cr->arc(it->second.pos.x, it->second.pos.y, 10.0, 0.0, 2 * M_PI);
+		cr->fill_preserve();
+		cr->stroke();
+
+		cr->set_source_rgb(1,1,1);
+		cr->move_to(it->second.pos.x-3, it->second.pos.y+3);
+		cr->set_font_face(font);
+		cr->set_font_size(11);
+		std::ostringstream strs;
+		strs << it->second.index;
+		cr->show_text(strs.str());
+		cr->stroke();
+	}
+}
+
 void MyArea::line(const Cairo::RefPtr<Cairo::Context>& cr, double x1, double y1, double x2, double y2, double weight) {
 	// Draw a line.
-	cr->set_line_width(8.0);
+	cr->set_line_width(3.0);
 	cr->set_source_rgba(1.0, 1.0, 1.0, 0.3);
 	cr->move_to(x1, y1);
 	cr->line_to(x2, y2);
@@ -42,9 +63,11 @@ void MyArea::line(const Cairo::RefPtr<Cairo::Context>& cr, double x1, double y1,
 	cr->set_font_face(font);
 	cr->set_font_size(16);
 	std::ostringstream strs;
-	double l1 = x1-x2;
-	double l2 = y1-y2;
-	weight = sqrt(l1*l1 + l2*l2);
+	/*
+	 *double l1 = x1-x2;
+	 *double l2 = y1-y2;
+	 *weight = sqrt(l1*l1 + l2*l2);
+	 */
 	strs << weight;
 	cr->show_text(strs.str());
 }
@@ -75,10 +98,14 @@ bool MyArea::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	}
 	cr->stroke();
 
+	drawGraph(cr,graph);
+
 	// Draw some lines.
-	line(cr, 100, 100, 300, 300, 15);
-	line(cr, 400, 150, 200, 100, 99);
-	line(cr, 10, 10, 10, 110, 99);
+	/*
+	 *line(cr, 100, 100, 300, 300, 15);
+	 *line(cr, 400, 150, 200, 100, 99);
+	 *line(cr, 10, 10, 10, 110, 99);
+	 */
 
 	cr->get_target()->write_to_png("output.png");
 
@@ -97,15 +124,6 @@ int main(int argc, char** argv)
 	MyArea area;
 	win.add(area);
 	area.show();
-
-	Graph graph;
-	graph.add(Node(1), Node(2));
-	graph.add(Node(2), Node(2));
-	graph.add(Node(2), Node(1));
-	graph.add(Node(2), Node(3));
-	graph.add(Node(4), Node(2));
-
-	graph.print();
 
 	return app->run(win);
 }
