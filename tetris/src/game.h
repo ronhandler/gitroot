@@ -23,6 +23,10 @@ private:
 	Board board;
 	void drawboard(void) const {
 		clear();
+		attron(A_BOLD);
+		printw("      Tetris\n");
+		printw("      ======\n\n");
+		attroff(A_BOLD);
 		for (int y=0; y<board.HEIGHT; ++y) {
 			for (int x=0; x<board.WIDTH; ++x) {
 				printw("%d ", board.get(x,y));
@@ -49,6 +53,9 @@ private:
 		noecho();
 		nodelay(stdscr, true);
 		timeout(1000);
+		raw();
+		keypad(stdscr, true);
+
 		clear();
 		// Init some stuff.
 		running=true;
