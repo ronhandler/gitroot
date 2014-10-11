@@ -18,7 +18,7 @@ sources = [
 env.Append(CCFLAGS=[
 	'-Wall',
 	'-g',
-	'-std=c++11'
+	#'-std=c++11'
 ])
 
 env.Append(CPPPATH = [
@@ -27,7 +27,8 @@ env.Append(CPPPATH = [
 ])
 
 env.Append(LIBS = [
-	'v8'
+        'ncurses',
+#	'v8'
 ])
 
 env.Append(LIBPATH = [
@@ -39,7 +40,7 @@ env.Append(LIBPATH = [
 #env.MergeFlags('-mwindows')
 
 env.Append(LINKFLAGS=[
-	#'-static',
+#	'-static',
 #	'-static-libgcc',
 #	'-static-libstdc++'
 ])

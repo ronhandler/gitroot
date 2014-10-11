@@ -2,12 +2,7 @@
 
 int main(int argc, char **argv)
 {
-	cout << "hello world\n";
-
-	Board tetrisBoard;
-	tetrisBoard.func();
-	tetrisBoard.print();
-
+	Game::getInstance().gameloop();
 	return 0;
 }
 

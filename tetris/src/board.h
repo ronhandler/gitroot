@@ -1,50 +1,40 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-#include <iostream>
-using namespace std;
-#include <string>
-#include <stddef.h>
-
 #include "block.h"
 
 class Board
 {
-protected:
-	const static int Height=22;
-	const static int Width=10;
-	int arr[Width][Height];
-	Factory blockFactory;
-	BaseBlock *currblock;
 public:
+	// Magic numbers. These set the size of the board.
+	const static int HEIGHT=22;
+	const static int WIDTH=10;
+	const static int OUTOFRANGE=-1;
 	Board() {
-		// Init the board to zeros.
-		for (int j=0; j<Height; ++j) {
-			for (int i=0; i<Width; ++i) {
-				arr[i][j]=0;
+		init();
+	}
+	bool set(int x, int y, int value) {
+		if (x<0 || x>=WIDTH || y<0 || y>=HEIGHT)
+			return false;
+		grid[x][y] = value;
+		return true;
+	}
+	int get(int x, int y) const {
+		if (x<0 || x>=WIDTH || y<0 || y>=HEIGHT)
+			return OUTOFRANGE;
+		else
+			return grid[x][y];
+	}
+private:
+	void init(void ) {
+		// Init the board's grid.
+		for (int y=0; y<HEIGHT; ++y) {
+			for (int x=0; x<WIDTH; ++x) {
+				grid[x][y]=0;
 			}
 		}
 	}
-	void print() {
-		for (int j=0; j<Height; ++j) {
-			for (int i=0; i<Width; ++i) {
-				if (currblock->inRange(i,j)) {
-					currblock->print(i-currblock->x,j-currblock->y);
-				} else {
-					if (arr[i][j]!=0)
-						cout << arr[i][j] << " ";
-					else
-						cout << "_ ";
-				}
-			}
-			cout << endl;
-		}
-	}
-	void func() {
-		currblock = blockFactory.createBlock("L");
-		currblock->x=7;
-		currblock->y=2;
-	}
+	int grid[WIDTH][HEIGHT];
 };
 
 #endif
