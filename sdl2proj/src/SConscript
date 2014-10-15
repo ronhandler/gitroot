@@ -3,49 +3,29 @@
 import os
 
 env = Environment(ENV=os.environ)
-Tool('mingw')(env)
 
-build_filename = '../build/temp.exe'
+build_filename = '../build/a.out'
 
 sources = [
 	Glob('*.cpp'),		# Add all cpp files.
-	env.RES('res.rc')	# Add a resource file to be compiled with windres.
 ]
-
-# Change the default g++ executable to mingw-w64's version.
-env.Replace(CXX = "x86_64-w64-mingw32-g++") 
 
 env.Append(CCFLAGS=[
 	'-Wall',
 	'-g'
 ])
 
-env.Append(CPPPATH = [
-	'/mingw64/include',
-	'/mingw64/x86_64-w64-mingw32/include'
-])
-
 env.Append(LIBS = [
-	'-lglew32',
-	'-lopengl32',
-	'-lglu32'
+	'SDL2_ttf',
+	#'-lglew32',
+	#'-lopengl32',
+	#'-lglu32'
 ])
 
-env.Append(LIBPATH = [
-	'/mingw64/lib',
-	'/mingw64/x86_64-w64-mingw32/lib'
-])
+env.ParseConfig('sdl2-config --cflags')
+env.ParseConfig('sdl2-config --libs')
+#env.ParseConfig('pkg-config --cflags --libs SDL2_ttf')
 
-env.ParseConfig('sdl2-config --cflags --libs')
-
-# Parse the -mwindows flag to remove the annoying console window.
-env.MergeFlags('-mwindows')
-
-env.Append(LINKFLAGS=[
-	#'-static',
-	'-static-libgcc',
-	'-static-libstdc++'
-])
 
 env.Program(target = build_filename, source = sources)
 
