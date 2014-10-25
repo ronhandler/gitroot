@@ -1,0 +1,4 @@
+# A config file.
+str = hello world
+width = 3
+height = 6

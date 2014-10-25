@@ -1,0 +1,13 @@
+#!/usr/bin/python
+# This is a SCons script that builds a java project.
+
+import os
+
+executable = 'build/a.jar'
+#sources = Glob('src/*.java')  # Add the the java source files.
+cls = Java(target = 'classes', source = 'src')
+cls = Glob('classes/*')
+cls.append('src/MANIFEST.MF') # Add the manifest file.
+
+Jar(target = executable, source = cls)
+
