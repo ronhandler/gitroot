@@ -36,6 +36,7 @@ class Board
 		for (int x=0; x<width; ++x) {
 			arr[x][0] = (rand(0,100) > CHANCE) ? 1 : 0;
 		}
+		arr[2][2] = -1;
 
 	}
 	// This is the game loop.
@@ -94,7 +95,17 @@ class Board
 				break;
 		}
 
-		arr[width/2][0] = 6;
+		// Push pieces.
+		for (int y=0; y<height; ++y) {
+			for (int x=0; x<width; ++x) {
+				push(x,y);
+			}
+		}
+		// Put some random pieces on the board.
+		for (int x=0; x<width; ++x) {
+			if (arr[x][height-1] == 0)
+				arr[x][height-1] = (rand(0,100) > CHANCE) ? 1 : 0;
+		}
 
 		// Rotate board back to original.
 		switch (dir) {
@@ -114,6 +125,24 @@ class Board
 				break;
 		}
 	}
+
+	private void push(int x, int y)
+	{
+		if (y == 0)
+			return;
+		if (arr[x][y] == -1)
+			return;
+		if (arr[x][y-1] == 0) {
+			arr[x][y-1] = arr[x][y];
+			arr[x][y] = 0;
+		} else
+		if (arr[x][y-1] == arr[x][y]) {
+			arr[x][y-1]++;
+			arr[x][y] = 0;
+		}
+		push(x,y-1);
+	}
+
 	// Clock-wise rotation by 90 degrees.
 	private void rotate90d()
 	{
@@ -148,7 +177,10 @@ class Board
 		for (int y=0; y<height; ++y) {
 			for (int x=0; x<width; ++x) {
 				//System.out.print(".");
-				System.out.format("%4d ", arr[x][y]); 
+				if (arr[x][y] == -1)
+					System.out.format("   X ", arr[x][y]); 
+				else
+					System.out.format("%4d ", arr[x][y]); 
 			}
 			System.out.print("\n");
 		}
