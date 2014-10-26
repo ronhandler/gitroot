@@ -4,13 +4,16 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Random;
+import java.lang.Math.*;
 
 class Board
 {
+	protected int Xposx;
+	protected int Xposy;
 	protected int arr[][];
 	protected int width;
 	protected int height;
-	protected static int CHANCE = 50;
+	protected static int CHANCE = 25;
 	protected Conf conf;
 	public Board()
 	{
@@ -34,9 +37,12 @@ class Board
 		}
 		// Put some random pieces on the board.
 		for (int x=0; x<width; ++x) {
-			arr[x][0] = (rand(0,100) > CHANCE) ? 1 : 0;
+			arr[x][0] = (rand(0,100) < CHANCE) ? 1 : 0;
 		}
-		arr[2][2] = -1;
+
+		Xposx = 2;
+		Xposy = 2;
+		arr[Xposx][Xposy] = -1;
 
 	}
 	// This is the game loop.
@@ -68,6 +74,10 @@ class Board
 						break;
 					case "l":
 						move(Direction.RIGHT);
+						break;
+					case "x":
+						twistX();
+						twistX();
 						break;
 				}
 			} catch(IOException e) {
@@ -103,11 +113,13 @@ class Board
 		}
 		// Put some random pieces on the board.
 		for (int x=0; x<width; ++x) {
-			if (arr[x][height-1] == 0)
-				arr[x][height-1] = (rand(0,100) > CHANCE) ? 1 : 0;
+			if (arr[x][height-1] == 0) {
+				arr[x][height-1] = (rand(0,100) < CHANCE) ? 
+				(arr[x][height-1] = (rand(0,100) < CHANCE) ? 2 : 1) : 0;
+			}
 		}
 
-		// Rotate board back to original.
+		// Rotate board back to the original orientation.
 		switch (dir) {
 			case UP:
 				break;
@@ -171,16 +183,33 @@ class Board
 		}
 		old_arr = null;
 	}
+	private void twistX()
+	{
+		if (Xposx>0 && Xposy>0 && Xposx<width-1 && Xposy<height-1) {
+			int temp = arr[Xposx-1][Xposy-1];
+			arr[Xposx-1][Xposy-1] = arr[Xposx][Xposy-1];
+			arr[Xposx][Xposy-1] = arr[Xposx+1][Xposy-1];
+			arr[Xposx+1][Xposy-1] = arr[Xposx+1][Xposy];
+			arr[Xposx+1][Xposy] = arr[Xposx+1][Xposy+1];
+			arr[Xposx+1][Xposy+1] = arr[Xposx][Xposy+1];
+			arr[Xposx][Xposy+1] = arr[Xposx-1][Xposy+1];
+			arr[Xposx-1][Xposy+1] = arr[Xposx-1][Xposy];
+			arr[Xposx-1][Xposy] = temp;
+		}
+
+	}
 	private void print()
 	{
 		System.out.println("2048 on a " + width + "x" + height + " board.\n");
 		for (int y=0; y<height; ++y) {
 			for (int x=0; x<width; ++x) {
 				//System.out.print(".");
-				if (arr[x][y] == -1)
+				if (arr[x][y] == 0)
+					System.out.format("   . ", arr[x][y]); 
+				else if (arr[x][y] == -1)
 					System.out.format("   X ", arr[x][y]); 
 				else
-					System.out.format("%4d ", arr[x][y]); 
+					System.out.format("%4.0f ", Math.pow(2, arr[x][y])); 
 			}
 			System.out.print("\n");
 		}

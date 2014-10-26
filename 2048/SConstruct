@@ -3,11 +3,14 @@
 
 import os
 
+env = Environment()
+env.Append(JAVACFLAGS = ["-cp", "src/blacken.jar"])
+
 executable = 'build/a.jar'
-#sources = Glob('src/*.java')  # Add the the java source files.
-cls = Java(target = 'classes', source = 'src')
+sources = Glob('src')  # Add the the java source files.
+cls = env.Java(target = 'classes', source = sources)
 cls = Glob('classes/*')
 cls.append('src/MANIFEST.MF') # Add the manifest file.
 
-Jar(target = executable, source = cls)
+env.Jar(target = executable, source = cls)
 
