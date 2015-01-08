@@ -14,6 +14,11 @@ int main(int argc, char* argv[])
 	graph.add_edge(5, 6);
 	graph.add_edge(6, 8);
 
+	graph.mod_vertex_property(1, "label", "bahh");
+	graph.mod_vertex_property(1, "color", "black");
+	graph.mod_vertex_property(1, "fillcolor", "red");
+	graph.mod_vertex_property(1, "style", "filled");
+	graph.mod_vertex_property(1, "shape", "circle");
 	graph.print_dot_format();
 	return 0;
 }

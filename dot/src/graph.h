@@ -28,6 +28,7 @@ class Vertex
 public:
 	int x;
 	int y;
+	map< std::string, std::string > properties;
 	vertex_index index;
 	Vertex(): x(0), y(0), index(0) { }
 	Vertex(vertex_index i): x(0), y(0) { index=i; }
@@ -37,7 +38,17 @@ public:
 	}
 	void print()
 	{
-		cout << "\t" << index << ";" << endl;
+		cout << "\t" << index;
+
+		map< std::string, std::string>::iterator it; 
+		if (properties.empty() == false) {
+			cout << " [ ";
+			for (it = properties.begin(); it != properties.end(); ++it) {
+				cout << it->first << "=\"" << it->second << "\" ";
+			}
+			cout << "]";
+		}
+		cout << ";" << endl;
 	}
 };
 
@@ -70,6 +81,16 @@ public:
 			vertex_map[u] = Vertex(u);
 		}
 		(edge_map[v])[u] = Edge(v,u);
+	}
+	void mod_vertex_property(vertex_index v,
+			std::string property,
+			std::string value)
+	{
+		// If v does not exist, we should create it.
+		if (vertex_map.find(v) == vertex_map.end()) {
+			vertex_map[v] = Vertex(v);
+		}
+		(vertex_map[v]).properties[property] = value;
 	}
 private:
 	static vertex_index vertices_number;
