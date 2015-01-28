@@ -1,0 +1,4 @@
+bgammon
+=======
+
+Back Gammon implementation
