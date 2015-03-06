@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os.path
 import cv2
 import numpy as np
 from ColourDetection import *
@@ -11,19 +12,24 @@ from image_func import *
 
 cap = cv2.VideoCapture(0)
 ret, new_image = cap.read()
+# If the old image exists:
+if os.path.isfile('old.jpg') :
+    old_image = cv2.imread('old.jpg')
+    cv2.imwrite('old.jpg', new_image)
+    # Generate a diff image.
+    diff_image = diff_func(old_image, new_image);
+    color = ColourDetection.detect_color(diff_image)
+    
+    #cv2.imshow('new_image',new_image)
+    #cv2.imshow('old_image',old_image)
+    #cv2.imshow('diff_image',diff_image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    color = ColourDetection.detect_color(diff_image)
+# Otherwise, there is no old image:
+else:
+    cv2.imwrite('old.jpg', new_image)
+    color = ColourDetection.detect_color(new_image)
 
-old_image = cv2.imread('old.jpg')
-
-
-height1, width1 = old_image.shape[:2]
-height2, width2 = new_image.shape[:2]
-
-#print("The sizes are:" + str(width1) + "x" + str(height1))
-#print("The sizes are:" + str(width2) + "x" + str(height2))
-
-diff_image = diff_func(new_image, old_image);
-
-color = ColourDetection.detect_color(diff_image)
-print("The returned color is: " + color)
-cv2.imwrite('old.jpg', new_image)
+print("The detected color is: " + color)
 

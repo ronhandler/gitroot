@@ -9,7 +9,7 @@ def diff_func(prev_i,state_i):
     new_i = prev_i
 
     #THRESHOLD = input('Please enter your requested level of Threshold')
-    THRESHOLD = 5
+    THRESHOLD = 20
 
     height, width = prev_i.shape[:2]
     i = 0
