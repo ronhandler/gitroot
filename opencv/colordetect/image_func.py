@@ -1,45 +1,34 @@
+#!/usr/bin/python
 
 import cv2
 import math
 import numpy as np
 
-def diff_func(prev_i,state_i):
-    #new_i = cv2.imread("/shared/new_copy.jpg")
-    # This is a weird way to define new_i as an image...
-    new_i = prev_i
+#images uploading / not mandatory in case of calling the function from other scope
 
-    #THRESHOLD = input('Please enter your requested level of Threshold')
-    THRESHOLD = 20
+#pre = cv2.imread("/shared/prev_copy.jpg")
+#post = cv2.imread("/shared/new_copy.jpg")
 
-    height, width = prev_i.shape[:2]
-    i = 0
-    j = 0
-    #width = width - 1
-    #height = height - 1
+# some global vars
+
+LOWER_LIMIT = 0    # At your choice for threshold
+ABSPIXEL = 255*3    # The value of the sum of pix
+FACTOR = 3          # Scalar using us to enhance - working in the contrary to LOWER_LIMIT 
+
+def trans_scalar_level(val_of_transform):   # Transformation calculus function -> returning scalar 
+    return FACTOR*val_of_transform/float(ABSPIXEL)
+
+def compare_pixel(rhs,lhs,limit):       # Comparison function - sums the absolute diff in pixes values
+    check = abs(int(rhs[0])-int(lhs[0])) + abs(int(rhs[1])-int(lhs[1])) + abs(int(rhs[2])-int(lhs[2]))
+    if check <= limit:
+        return 0
+    return trans_scalar_level(check)
+
+# "Main Function" - returning an image of diffrances between to images
+def diff_func(pre, post):
+    new_i = pre
+    height, width = pre.shape[:2]
     for i in range (0,width):
         for j in range (0,height):
-            if compare_pixel(state_i[j,i],prev_i[j,i],THRESHOLD):
-                new_i[j,i] = state_i[j,i]
-            else:
-                new_i[j,i] = [0,0,0]
-
-    #new_i = cv2.cvtColor(new_i, cv2.COLOR_BGR2GRAY)
+            new_i[j,i] = compare_pixel(post[j,i],pre[j,i],LOWER_LIMIT)*np.array(post[j,i])
     return new_i
-
-def absval(qt):
-    if qt<0:
-        qt = qt/-1
-        return qt
-    return qt
-
-def trans_scalar_level(input_num,THRESHOLD):
-    x = (input_num/THRESHOLD)*10
-    return round(x)
-
-def compare_pixel(rhs,lhs,THRESHOLD):
-    check = absval(int(rhs[0])-int(lhs[0])) + absval(int(rhs[1])-int(lhs[1])) + absval(int(rhs[2])-int(lhs[2]))
-    if check <= THRESHOLD:
-        #if rhs[0]==lhs[0] and rhs[1]==lhs[1] and rhs[2]==rhs[2]:
-        return 0
-    return 1
-    #return trans_scalar_level(check,THRESHOLD)

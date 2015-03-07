@@ -20,11 +20,11 @@ if os.path.isfile('old.jpg') :
     diff_image = diff_func(old_image, new_image);
     color = ColourDetection.detect_color(diff_image)
     
-    #cv2.imshow('new_image',new_image)
-    #cv2.imshow('old_image',old_image)
-    #cv2.imshow('diff_image',diff_image)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.imshow('new_image',new_image)
+    cv2.imshow('old_image',old_image)
+    cv2.imshow('diff_image',diff_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     color = ColourDetection.detect_color(diff_image)
 # Otherwise, there is no old image:
 else:
