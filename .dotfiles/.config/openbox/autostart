@@ -1,0 +1,9 @@
+(sleep 1 && /etc/set_wallpaper) &
+(sleep 1 && compton --config ~/.config/compton.conf) &
+(sleep 0.5 && pytyle) &
+(sleep 0.5 && xfce4-clipman) &
+(sleep 0.5 && /usr/bin/setxkbmap -option 'ctrl:nocaps') &
+(sleep 0.5 && xset r rate 220 35) &
+
+#(sleep 1 && xcompmgr -c -C -t-5 -l-5 -r4.2 -o.55) &
+#(sleep 1 && tint2) &
