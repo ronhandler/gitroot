@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# This is an xrandr wrapper.
+# It is used to trigger a wallpaper refresh upon virtualbox window resize.
+
+MyArgs="$@";
+/etc/set_wallpaper;
+/usr/bin/xrandr_original $MyArgs

@@ -1,0 +1,4 @@
+#!/bin/bash
+#/usr/bin/feh --bg-fill /home/user/Pictures/yosemite.jpg &
+#/usr/bin/feh --bg-fill /home/user/Pictures/hollywood.jpg &
+/usr/bin/feh --bg-fill /home/user/Pictures/wallpaper02.png &
