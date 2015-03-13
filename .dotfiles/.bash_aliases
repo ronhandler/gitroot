@@ -1,0 +1,6 @@
+alias ls='ls --color'
+alias l='ls -la'
+alias ll='ls -l'
+alias la='ls -A'
+#alias capture='fswebcam --jpeg 100 --no-banner test.jpg'
+alias capture='fswebcam --jpeg 100 --no-banner -i 0 --device /dev/video0 -r 320x240 test.jpg'
