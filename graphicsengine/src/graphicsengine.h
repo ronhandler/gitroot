@@ -5,14 +5,12 @@
 #include <map>
 #include <GLFW/glfw3.h>
 
-class GraphicsEngine
+#include "object.h"
+
+class GraphicsEngine /* Singleton. */
 {
 
 public:
-
-	/* public member variables. */
-	/* ************************ */
-
 
 	/* public member functions. */
 	/* ************************ */
@@ -31,7 +29,10 @@ public:
 	{
 		if (!glfwInit())
 			return 1;
-		window = glfwCreateWindow(width, height, "Simple example", NULL, NULL);
+		window = glfwCreateWindow(
+			width, height,
+			"Simple example",
+			NULL, NULL);
 		if (!window) {
 			glfwTerminate();
 			return 1;
