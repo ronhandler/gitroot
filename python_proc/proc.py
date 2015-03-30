@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -B
 #
 # This python module is a wrapper around subprocess.
 # Features:
@@ -19,7 +19,7 @@ def call(args, timeout=0):
 	try:
 		signal.signal(signal.SIGALRM, alarm_handler)
 		signal.alarm(timeout)  # Default timeout is 60 seconds.
-		result = proc.communicate()[0].strip().decode('utf-8')
+		result = proc.communicate()[0].decode('utf-8').strip()
 		signal.alarm(0)  # Reset the alarm.
 	except Alarm:
 		# If the process timed out, kill it.
