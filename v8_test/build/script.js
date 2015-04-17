@@ -14,3 +14,9 @@ function dbl(x) {
 var str = "The value is: " + dbl(3) + '\n';
 print(str);
 
+var num = Math.random();
+print("A random number is: " + num + "\n\n");
+
+var i = Math.pow(2,10)
+blah(i);
+
