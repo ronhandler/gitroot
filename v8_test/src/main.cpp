@@ -12,6 +12,7 @@ int main(int argc, char* argv[]) {
 
 	script.load("build/script.js");
 	script.init();
+	script.run();
 	return 0;
 }
 

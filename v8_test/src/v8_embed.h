@@ -17,18 +17,33 @@ Handle<Value> Include(const Arguments& args);
 Handle<Value> Print(const Arguments& args);
 
 namespace V8_embed {
+
+	/*
+	 * A scirpt engine class. It is used to load and execute javascript
+	 * scripts.
+	 */
 	class ScriptEngine {
 	private:
 		string src_fname;
 		Handle<ObjectTemplate> global_templ;
 		// Create a stack-allocated handle scope.
 		HandleScope handle_scope;
+
+		Handle<Script> script;
+		// Catch exceptions.
+		TryCatch trycatch;
+
+		// Create a new context.
+		Persistent<Context> context;
 	public:
+		/* Constructor. */
 		ScriptEngine()
 		{
 			src_fname = "build/script.js";
 			global_templ = ObjectTemplate::New();
 		}
+
+		/* Sets a lambda function as a javascript function. */
 		template<typename Functor>
 		void set(const string &func_name, Functor functor)
 		{
@@ -42,10 +57,14 @@ namespace V8_embed {
 				};
 			global_templ->Set(String::New(func_name.c_str()), FunctionTemplate::New(func));
 		}
+
+		/* Loads a script file. */
 		void load(const string &filename)
 		{
 			src_fname = filename;
 		}
+
+		/* Inits V8. */
 		int init()
 		{
 			try {
@@ -57,30 +76,45 @@ namespace V8_embed {
 				global_templ->Set(String::New("include"), FunctionTemplate::New(Include));
 				
 				// Create a new context.
-				Persistent<Context> context = Context::New(0, global_templ);
+				context = Context::New(0, global_templ);
 				
 				// Enter the created context for compiling and running our program.
 				context->Enter();
-
-				// Catch exceptions.
-				TryCatch trycatch;
 
 				// Create a string containing the JavaScript code to execute.
 				Handle<String> source = String::New(src_str.c_str());
 				
 				// Compile the Javascript code.
-				Handle<Script> script = Script::Compile(source, String::New(src_fname.c_str()));
+				script = Script::Compile(source, String::New(src_fname.c_str()));
 				
 				if (script.IsEmpty()) {
 					//cerr << src_str << endl;
 					context.Dispose();
 					throw(-2);
 				}
+			}
+			catch (int &i) {
+				if (i==-1) {
+					cerr << "Error reading file " << src_fname << ". Aborting." << endl;
+					return i;
+				} else
+				if (i==-2) {
+					cerr << "Error compiling script file. Aborting." << endl;
+					return i;
+				}
+			}
+			return 1;
+		}
+				
 
+		/* Runs the script. */
+		int run()
+		{
+			try {
 				// Run the script to get the result.
 				Handle<Value> result = script->Run();
-				
 				// Check for errors.
+
 				if (result.IsEmpty()) {
 					Handle<Message> message = trycatch.Message();
 					int linenum = message->GetLineNumber();
