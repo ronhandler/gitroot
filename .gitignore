@@ -1,6 +1,6 @@
-*Session.vim
-*.dll
-*.o
-*.exe
-*a.out
-*.sconsign.dblite
+**/Session.vim
+**/.dll
+**/.o
+**/.exe
+**/a.out
+**/.sconsign.dblite
