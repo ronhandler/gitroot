@@ -10,6 +10,13 @@ int main(int argc, char* argv[]) {
 		}
 	);
 
+	script.set_v2("myfunc",
+		[=]()
+		{
+			std::cout << "hello world " << std::endl; 
+		}
+	);
+
 	script.load("build/script.js");
 	script.init();
 	script.run();
