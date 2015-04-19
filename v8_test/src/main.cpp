@@ -11,9 +11,9 @@ int main(int argc, char* argv[]) {
 	);
 
 	script.set_v2("myfunc",
-		[=]()
+		[=](int i)
 		{
-			std::cout << "hello world " << std::endl; 
+			std::cout << "hello world " << i << std::endl; 
 		}
 	);
 

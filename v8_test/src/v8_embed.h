@@ -68,7 +68,8 @@ public:
 			{
 				//f(args[0]->ToInteger()->Value());
 				//f(a...);
-				f();
+				//f();
+				f(args[0]->ToInteger()->Value(), a...);
 				return v8::Undefined();
 			};
 		global_templ->Set(String::New(func_name.c_str()), FunctionTemplate::New(func));

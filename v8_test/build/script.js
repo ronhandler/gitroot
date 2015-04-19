@@ -23,4 +23,5 @@
  */
 
 myfunc();
+myfunc(4);
 
