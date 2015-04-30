@@ -30,5 +30,5 @@ f2='IcyWindLPF8k.wav';
 s = snr(v1, v2);
 
 % Print the result.
-printf ("SNR of %s and %s is: %d\n", f1, f2, s);
+printf ("SNR of %s and %s is: %f\n", f1, f2, s);
 
