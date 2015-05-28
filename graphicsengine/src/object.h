@@ -26,6 +26,12 @@ protected:
 	GLfloat y;
 };
 
+class Vector
+{
+public:
+	Point start;
+	Point end;
+};
 
 class Shape
 {
@@ -37,6 +43,18 @@ public:
 			vertexArray.at(i).setX(vertexArray.at(i).getX() + xoffset);
 			vertexArray.at(i).setY(vertexArray.at(i).getY() + yoffset);
 		}
+	}
+	void speed(GLfloat xoffset, GLfloat yoffset)
+	{
+		movementVector.end.setX(movementVector.end.getX() + xoffset);
+		movementVector.end.setY(movementVector.end.getY() + yoffset);
+	}
+	void updateLocation()
+	{
+		GLfloat xoffset, yoffset;
+		xoffset = movementVector.start.getX() - movementVector.end.getX();
+		yoffset = movementVector.start.getY() - movementVector.end.getY();
+		move(xoffset, yoffset);
 	}
 
 	Point & operator()(const unsigned int i)
@@ -57,6 +75,7 @@ public:
 		glEnd();
 	}
 protected:
+	Vector movementVector;
 	std::vector<Point> vertexArray;
 };
 
@@ -69,6 +88,8 @@ public:
 		vertexArray.push_back(p2);
 		vertexArray.push_back(p3);
 		vertexArray.push_back(p4);
+		movementVector.start = p1;
+		movementVector.end = p1;
 	}
 };
 
@@ -96,6 +117,18 @@ public:
 	{
 		for (unsigned int i=0; i<shapesArray.size(); ++i) {
 			shapesArray.at(i)->move(xoffset, yoffset);
+		}
+	}
+	void speed(GLfloat xoffset, GLfloat yoffset)
+	{
+		for (unsigned int i=0; i<shapesArray.size(); ++i) {
+			shapesArray.at(i)->speed(xoffset, yoffset);
+		}
+	}
+	void updateLocation()
+	{
+		for (unsigned int i=0; i<shapesArray.size(); ++i) {
+			shapesArray.at(i)->updateLocation();
 		}
 	}
 	Object() {}
