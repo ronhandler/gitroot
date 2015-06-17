@@ -24,6 +24,10 @@ public:
 		rendererFunc = func;
 		return 0;
 	}
+	int registerGameloop(std::function<void()> func) {
+		gameloopFunc = func;
+		return 0;
+	}
 	int registerKey(int key, std::function<void()> func) {
 		mapKeyFunction[key] = func;
 		return 0;
@@ -58,6 +62,7 @@ public:
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 
+			gameloopFunc();
 			rendererFunc();
 
 			/*
@@ -69,6 +74,7 @@ public:
 			 *    glVertex3f(-.5f, .5f, 0.f);
 			 *glEnd();
 			 */
+
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 		}
@@ -92,6 +98,7 @@ private:
 	GLFWwindow* window;
 	std::map< int, std::function<void()> > mapKeyFunction;
 	std::function<void()> rendererFunc;
+	std::function<void()> gameloopFunc;
 
 	/* Private member functions. */
 	/* ************************* */
