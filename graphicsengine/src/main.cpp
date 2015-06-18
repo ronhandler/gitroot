@@ -21,28 +21,23 @@ int main(void)
 	eng.registerGameloop( [newobj](void) {
 		newobj->updateLocation();
 	});
-	std::cerr << "BOOM" << std::endl;
 
-	static float offset = 0.005;
+	static float offset = 0.5;
 	eng.registerKey('W', [newobj](void) {
 		std::cerr << "Up\n"; 
-		//newobj->move(0, offset);
-		newobj->speed(0, -offset);
+		newobj->speed(0, -offset*GraphicsEngine::getInst().getDelta());
 	});
 	eng.registerKey('A', [newobj](void) {
 		std::cerr << "Left\n"; 
-		//newobj->move(-offset, 0);
-		newobj->speed(offset, 0);
+		newobj->speed(offset*GraphicsEngine::getInst().getDelta(), 0);
 	});
 	eng.registerKey('S', [newobj](void) {
 		std::cerr << "Down\n"; 
-		//newobj->move(0, -offset);
-		newobj->speed(0, offset);
+		newobj->speed(0, offset*GraphicsEngine::getInst().getDelta());
 	});
 	eng.registerKey('D', [newobj](void) {
 		std::cerr << "Right\n"; 
-		//newobj->move(offset, 0);
-		newobj->speed(-offset, 0);
+		newobj->speed(-offset*GraphicsEngine::getInst().getDelta(), 0);
 	});
 
 	eng.start();

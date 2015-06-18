@@ -20,6 +20,10 @@ public:
 		return instance;
 	}
 
+	double getDelta() const {
+		return deltaTime;
+	}
+
 	int registerRenderer(std::function<void()> func) {
 		rendererFunc = func;
 		return 0;
@@ -51,6 +55,7 @@ public:
 
 		while (!glfwWindowShouldClose(window)) {
 			int w, h;
+
 			glfwGetFramebufferSize(window, &w, &h);
 			glViewport(0, 0, width, height);
 			glClear(GL_COLOR_BUFFER_BIT);
@@ -61,6 +66,11 @@ public:
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
+
+			// Get the current time to calculate the delta.
+			currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
 
 			gameloopFunc();
 			rendererFunc();
@@ -95,6 +105,10 @@ private:
 	constexpr static const float width=640;
 	constexpr static const float height=480;
 
+	double currentFrame;
+	double deltaTime;
+	double lastFrame;
+
 	GLFWwindow* window;
 	std::map< int, std::function<void()> > mapKeyFunction;
 	std::function<void()> rendererFunc;
@@ -126,8 +140,10 @@ protected:
 	/* Protected member functions. */
 	/* *************************** */
 
-   GraphicsEngine() {}
-   GraphicsEngine(const GraphicsEngine &) = delete;
-   GraphicsEngine& operator=(const GraphicsEngine &) = delete;
+	GraphicsEngine() {
+		deltaTime = 1;
+	}
+	GraphicsEngine(const GraphicsEngine &) = delete;
+	GraphicsEngine& operator=(const GraphicsEngine &) = delete;
 };
 
