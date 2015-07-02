@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include <iostream>
 #include <vector>
 #include <GL/gl.h>
@@ -55,6 +56,26 @@ public:
 		xoffset = movementVector.start.getX() - movementVector.end.getX();
 		yoffset = movementVector.start.getY() - movementVector.end.getY();
 		move(xoffset, yoffset);
+	}
+	void frictionSlowdown()
+	{
+		double friction = 0.01;
+		double directionX = (movementVector.start.getX() > movementVector.end.getX()) ? 1 : -1;
+		double directionY = (movementVector.start.getY() > movementVector.end.getY()) ? 1 : -1;
+		// Stabilize to a stand-still, if vector is too weak.
+		/*
+		 *if ((abs(movementVector.start.getX() - movementVector.end.getX())<=friction) && (abs(movementVector.start.getY() - movementVector.end.getY())<=friction)) {
+		 *    movementVector.end.setX(movementVector.start.getX());
+		 *    movementVector.end.setY(movementVector.start.getY());
+		 *    return;
+		 *}
+		 */
+		if (movementVector.start.getX() > movementVector.end.getX())
+			directionX=directionX * -1;
+		if (movementVector.start.getY() > movementVector.end.getY())
+			directionY=directionY * -1;
+		movementVector.end.setX(movementVector.start.getX()+ directionX*(movementVector.start.getX()-movementVector.end.getX())*(1-friction) );
+		movementVector.end.setY(movementVector.start.getY()+ directionY*(movementVector.start.getY()-movementVector.end.getY())*(1-friction) );
 	}
 
 	Point & operator()(const unsigned int i)
@@ -129,6 +150,12 @@ public:
 	{
 		for (unsigned int i=0; i<shapesArray.size(); ++i) {
 			shapesArray.at(i)->updateLocation();
+		}
+	}
+	void frictionSlowdown()
+	{
+		for (unsigned int i=0; i<shapesArray.size(); ++i) {
+			shapesArray.at(i)->frictionSlowdown();
 		}
 	}
 	Object() {}

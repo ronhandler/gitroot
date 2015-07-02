@@ -19,7 +19,9 @@ int main(void)
 		newobj->draw();
 	});
 	eng.registerGameloop( [newobj](void) {
+		//double delta = GraphicsEngine::getInst().getDelta();
 		newobj->updateLocation();
+		newobj->frictionSlowdown();
 	});
 
 	static float offset = 0.5;
