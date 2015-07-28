@@ -2,6 +2,15 @@
 
 echo off all
 
+function [vec] = rotateTheta(uv, theta)
+	len = length(uv(:,1));
+	for i = 1:len
+		R = [cos(theta) -sin(theta); sin(theta) cos(theta)];
+		p = [uv(i,1);uv(i,2)];
+		vec(end+1,:) = R*p;
+	end
+end
+
 function [d] = dist(p1, p2)
 	a = p1(1)-p2(1);
 	b = p1(2)-p2(2);
@@ -44,7 +53,6 @@ function [vec] = getPointsOnLine(uv, line1, line2)
 	threshold = 5;
 	for i = 1:len
 		if uv(i,:) == line1 || uv(i,:) == line2
-			printf('continuing\n');
 			continue
 		end
 		temp_dist = 1;
@@ -57,6 +65,10 @@ end
 
 uv = load('uv').uv; 
 
+% Debug. Rotate points wrt (0,0).
+%uv = rotateTheta(uv, -70);
+%plot(uv(:,1), uv(:,2), "x", 'markersize', 20)
+%pause();
 
 % Temp debug. This tries to set the origin to another location.
 %uv(5,1) = uv(9,1);
@@ -112,9 +124,7 @@ origin_ind = i4;
 edges(4,:) = [];
 end
 
-disp(edges);
-
-printf('The origin point is: p%d(%d, %d)\n', origin_ind, p_origin(1), p_origin(2));
+%printf('The origin point is: p%d(%d, %d)\n', origin_ind, p_origin(1), p_origin(2));
 
 % Remove points that correspond to the edges.
 points = uv;
@@ -169,7 +179,7 @@ end
 p9 = edges(p9ind,:);
 
 origin = uv(origin_ind,:);
-p1 = origin
+p1 = origin;
 
 % Get the points p2, p3
 row1 = getPointsOnLine(points, origin, p4);
@@ -203,6 +213,13 @@ edges = [p4; p9; p12];
 plot(uv(origin_ind,1), uv(origin_ind,2), "x", 'markersize', 20,
 		edges(:,1), edges(:,2), "*", 'markersize', 20,
 		u, v, "o", 'markersize', 10);
+
+% Save the newly found vector.
+ordered_uv = [p1;p2;p3;p4;p5;p6;p7;p8;p9;p10;p11;p12];
+
+save('oredered.mat', 'ordered_uv');
+
+% Draw the plot.
 height = 10;
 text(p_origin(1),p_origin(2)+10, "1");
 text(p2(1),p2(2)+height, "2");
@@ -216,7 +233,7 @@ text(p9(1),p9(2)+height, "9");
 text(p10(1),p10(2)+height, "10");
 text(p11(1),p11(2)+height, "11");
 text(p12(1),p12(2)+height, "12");
-
 pause();
+
 %input("Press any key to continue.");
 
