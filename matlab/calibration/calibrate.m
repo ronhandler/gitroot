@@ -185,11 +185,19 @@ row4(p10ind,:) = [];
 
 % Get point p5
 col1 = getPointsOnLine(points, p1, p9);
-[p5,p5ind] = minDist(p1,p9);
+[p5,p5ind] = minDist(p1,col1);
+
+% Get point p6
+col2 = getPointsOnLine(points, p2, p10);
+[p6,p6ind] = minDist(p2,col2);
+
+% Get point p7
+col3 = getPointsOnLine(points, p3, p11);
+[p7,p7ind] = minDist(p3,col3);
 
 % Get point p8
-col2 = getPointsOnLine(points, p4, p12);
-[p8,p8ind] = minDist(p4,p12);
+col4 = getPointsOnLine(points, p4, p12);
+[p8,p8ind] = minDist(p4,col4);
 
 edges = [p4; p9; p12];
 plot(uv(origin_ind,1), uv(origin_ind,2), "x", 'markersize', 20,
@@ -200,7 +208,10 @@ text(p_origin(1),p_origin(2)+10, "1");
 text(p2(1),p2(2)+height, "2");
 text(p3(1),p3(2)+height, "3");
 text(p4(1),p4(2)+height, "4");
-%text(p8(1),p8(2)+height, "8");
+text(p5(1),p5(2)+height, "5");
+text(p6(1),p6(2)+height, "6");
+text(p7(1),p7(2)+height, "7");
+text(p8(1),p8(2)+height, "8");
 text(p9(1),p9(2)+height, "9");
 text(p10(1),p10(2)+height, "10");
 text(p11(1),p11(2)+height, "11");
