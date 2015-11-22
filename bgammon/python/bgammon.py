@@ -1,7 +1,7 @@
 #!/usr/bin/python
-from board import *
+from gamestate import *
 
 if __name__ == '__main__':
-    b = Board()
+    b = GameState()
     print(b)
 
