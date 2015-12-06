@@ -44,18 +44,44 @@ class GameState(object):
             "+------------------------------------------+\n",
             " 12 11 10  9  8  7        6  5  4  3  2  1  \n"
         ]
-
         # Convert str-list to list-of-list.
         ascii_list = list()
         for row in ascii_board:
             ascii_list.append(list(row))
 
+        def __draw_col(x, size, direction):
+            start = 0
+            if direction == 1:
+                start = 2
+            else:
+                start = 12
+
+            color = "."
+            if size < 0:
+                color = "o"
+                size = size * -1
+            elif size > 0:
+                color = "#"
+
+            if size > 5:
+                ascii_list[start][x] = str(size);
+                if size > 9:
+                    ascii_list[start][x+1] = "";
+                start = start + direction
+                size = 4
+            while size>0:
+                ascii_list[start][x] = color;
+                start = start + direction
+                size = size-1
+
         for i in range(12,18):
             index = i*3-36+2
-            if self.__board[i] > 0:
-                ascii_list[2][index] = "o"
-            elif self.__board[i] < 0:
-                ascii_list[2][index] = "x"
+            __draw_col(index, self.__board[i], 1)
+            __draw_col(index, self.__board[23-i], -1)
+        for i in range(18,24):
+            index = i*3-36+8
+            __draw_col(index, self.__board[i], 1)
+            __draw_col(index, self.__board[23-i], -1)
 
         # Convert list-of-list to str.
         buff = ""
