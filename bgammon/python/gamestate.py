@@ -82,6 +82,9 @@ class GameState(object):
             index = i*3-36+8
             __draw_col(index, self.__board[i], 1)
             __draw_col(index, self.__board[23-i], -1)
+        # Drawing the pieces on the bar.
+        __draw_col(21, self.__bar[0], 1)
+        __draw_col(21, self.__bar[1], -1)
 
         # Convert list-of-list to str.
         buff = ""
