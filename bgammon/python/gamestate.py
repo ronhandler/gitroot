@@ -1,13 +1,23 @@
 #!/usr/bin/python3
 
 from definitions import *
+from dice import *
 
 class GameState(object):
     def __init__(self):
+        self.__dicelist = [[],[]]
+        for d in range(0,2):
+            for i in range(0,6):
+                for j in range(0,6):
+                    self.__dicelist[d].append(Dice(i+1,j+1))
+            for i in range(0,10):
+                self.__dicelist[d].append(Dice())
+
         self.__board = [0]*24
         self.__bar = [0]*2
 
-        self.__color = Color.BLACK
+        self.__player = Player.CURRENT
+        #self.__player = Player.OPPONENT
 
         self.__board[23] = -2
         self.__board[12] = -5
@@ -19,11 +29,112 @@ class GameState(object):
         self.__board[11] = 5
         self.__board[0] = 2
 
-    def switch(self):
-        if self.__color == Color.BLACK:
-            self.__color = Color.WHITE
+    def getAmount(self, src):
+        return self.__board[src]
+
+    def getPlayerAtLocation(self, src):
+        if self.getAmount(src) < 0:
+            return Player.OPPONENT
+        elif self.getAmount(src) > 0:
+            return Player.CURRENT
         else:
-            self.__color = Color.BLACK
+            return Player.NONE
+
+    def isEnemy(self, src):
+        player = self.getPlayerAtLocation(src)
+        if player == self.__player or player == Player.NONE:
+            return False
+        return True
+
+    def getPlayerAmount(self, src):
+        #if self.isEnemy(src) == True:
+            #return 0
+        val = self.getAmount(src)
+        if self.__player == Player.OPPONENT:
+            return -val
+        return val
+
+    def eatPiece(self, src):
+        if self.getPlayer(src) == Player.CURRENT:
+            self.__board[src] -= 1
+            self.__bar[0] += 1
+        elif self.getPlayer(src) == Player.OPPONENT:
+            self.__board[src] += 1
+            self.__bar[1] += 1
+
+    def movePiece(self, src, amount):
+        dst = None
+        factor = None
+        if self.getPlayerAtLocation(src) == Player.CURRENT:
+            factor = 1
+            dst = src - amount
+        elif self.getPlayerAtLocation(src) == Player.OPPONENT:
+            factor = -1
+            dst = src + amount
+        else:
+            return
+        
+        # Boundaries check.
+        if dst < 0 or dst >= 24:
+            return
+
+        # Enemy check:
+        if self.isEnemy(dst):
+            # What happens when can't eat enemy.
+            if self.getPlayerAmount(dst) > 1:
+                return
+            # What happens when an enemy piece is eaten.
+            elif self.getPlayerAmount(dst) == 1:
+                self.__board[src] = self.__board[src] + factor
+                self.eatPiece(dst)
+                return
+        
+        self.__board[src] = self.__board[src] + factor
+        self.__board[dst] = self.__board[dst] - factor
+            
+        
+                
+    def switch(self):
+        # Swap players.
+        if self.__player == Player.OPPONENT:
+            self.__player = Player.CURRENT
+        else:
+            self.__player = Player.OPPONENT
+
+        i = 12
+        j = 11
+        while i<24:
+            # Swap board.
+            temp = self.__board[i]
+            self.__board[i] = -self.__board[j]
+            self.__board[j] = -temp
+            i += 1
+            j -= 1
+
+        for i in range(0,2):
+            # Swap dice list.
+            temp = self.__dicelist[0]
+            self.__dicelist[0] = self.__dicelist[1]
+            self.__dicelist[1] = temp
+
+            # Swap bar list.
+            temp = self.__bar[0]
+            self.__bar[0] = self.__bar[1]
+            self.__bar[1] = temp
+
+
+    def heuristics(self):
+        # Evaluate the heuristics value for a specific state
+
+        counter = 0
+        if self.__player == Player.CURRENT:
+            for i in range(0,24):
+                counter = counter + i * self.getPlayerAmount(i)
+        else:
+            for i in range(0,24):
+                counter = counter + (23-i) * self.getPlayerAmount(i)
+        return counter
+
 
     # This function returns a string of the formatted board.
     def __str__(self):
@@ -90,4 +201,8 @@ class GameState(object):
         buff = ""
         for row in ascii_list:
             buff = buff + ("".join(row))
+
+        # Add the dice lists:
+        buff = buff + "\n" + "Dice: " + str(self.__dicelist[0])
+        buff = buff + "\n" + "Dice: " + str(self.__dicelist[1])
         return buff
