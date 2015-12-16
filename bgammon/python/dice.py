@@ -22,6 +22,6 @@ class Dice:
             return [self.__a, self.__b]
 
     def __str__(self):
-        return "(" + str(self.__a) + " " + str(self.__b) + ")"
+        return "" + str(self.__a) + "+" + str(self.__b) + ""
     def __repr__(self):
         return str(self)

@@ -14,16 +14,20 @@ def playGame1():
     minmaxTree = Node()
     minmaxTree.state = GameState()
 
+    nextstates = rules.getNextStates(minmaxTree.state)
+    for s in nextstates:
+        minmaxTree.addChild(s)
+
     ai = GameAI()
-    val = ai.minmax(minmaxTree, 1, True)
+    (val,node) = ai.minmax(minmaxTree, 3, True)
+
     print("Minmax returned: " + str(val))
+    print(node.state)
 
-    print(minmaxTree.state)
-    minmaxTree.state.movePiece(18, 2)
-    print(minmaxTree.state)
+    #print(minmaxTree.state)
+    #minmaxTree.state.movePiece(23, 3)
+    #minmaxTree.state.removeFromBar(19)
 
-
-    #nextstates = rules.getNextStates(minmaxTree.state)
     #print("Number of next states: " + str(len(nextstates)))
 
 

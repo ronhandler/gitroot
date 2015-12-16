@@ -19,79 +19,75 @@ class GameState(object):
         self.__player = Player.CURRENT
         #self.__player = Player.OPPONENT
 
-        self.__board[23] = -2
-        self.__board[12] = -5
-        self.__board[7] = -3
-        self.__board[5] = -5
+        self.__board[23] = 2
+        self.__board[12] = 5
+        self.__board[7] = 3
+        self.__board[5] = 5
 
-        self.__board[18] = 5
-        self.__board[16] = 3
-        self.__board[11] = 5
-        self.__board[0] = 2
+        self.__board[18] = -5
+        self.__board[16] = -3
+        self.__board[11] = -5
+        self.__board[0] = -2
 
     def getAmount(self, src):
         return self.__board[src]
 
-    def getPlayerAtLocation(self, src):
-        if self.getAmount(src) < 0:
-            return Player.OPPONENT
-        elif self.getAmount(src) > 0:
-            return Player.CURRENT
-        else:
-            return Player.NONE
-
     def isEnemy(self, src):
-        player = self.getPlayerAtLocation(src)
-        if player == self.__player or player == Player.NONE:
-            return False
-        return True
+        return (self.__board[src] < 0)
+
+    def isBarEmpty(self):
+        return (len(self.__bar[0]) == 0)
 
     def getPlayerAmount(self, src):
-        #if self.isEnemy(src) == True:
-            #return 0
         val = self.getAmount(src)
-        if self.__player == Player.OPPONENT:
+        if val < 0:
             return -val
-        return val
+        else:
+            return val
 
-    def eatPiece(self, src):
-        if self.getPlayer(src) == Player.CURRENT:
-            self.__board[src] -= 1
-            self.__bar[0] += 1
-        elif self.getPlayer(src) == Player.OPPONENT:
-            self.__board[src] += 1
+    def removeFromBar(self, dst):
+        if self.__bar[0] == 0:
+            return
+        if dst < 18 or dst >= 24:
+            return
+        if self.getAmount(dst) < -1:
+            return
+        if self.getAmount(dst) == -1:
+            self.__bar[0] -= 1
+            self.__board[dst] = 1
             self.__bar[1] += 1
+            return
+        else:
+            self.__bar[0] -= 1
+            self.__board[dst] += 1
 
     def movePiece(self, src, amount):
-        dst = None
-        factor = None
-        if self.getPlayerAtLocation(src) == Player.CURRENT:
-            factor = 1
-            dst = src - amount
-        elif self.getPlayerAtLocation(src) == Player.OPPONENT:
-            factor = -1
-            dst = src + amount
-        else:
+
+        dst = src - amount
+
+        # If src is empty or enemy, can't move.
+        if self.getAmount(src) < 1:
             return
-        
+
         # Boundaries check.
-        if dst < 0 or dst >= 24:
+        if src >= 24 or dst < 0:
             return
+
 
         # Enemy check:
         if self.isEnemy(dst):
-            # What happens when can't eat enemy.
-            if self.getPlayerAmount(dst) > 1:
+            if self.getAmount(dst) < -1:
+                # What happens when can't eat enemy.
                 return
-            # What happens when an enemy piece is eaten.
-            elif self.getPlayerAmount(dst) == 1:
-                self.__board[src] = self.__board[src] + factor
-                self.eatPiece(dst)
+            elif self.getAmount(dst) == -1:
+                # What happens when an enemy piece is eaten.
+                self.__board[src] -= 1
+                self.__board[dst] = 1
+                self.__bar[1] += 1
                 return
-        
-        self.__board[src] = self.__board[src] + factor
-        self.__board[dst] = self.__board[dst] - factor
-            
+
+        self.__board[src] -= 1
+        self.__board[dst] += 1
         
                 
     def switch(self):
@@ -111,28 +107,25 @@ class GameState(object):
             i += 1
             j -= 1
 
-        for i in range(0,2):
-            # Swap dice list.
-            temp = self.__dicelist[0]
-            self.__dicelist[0] = self.__dicelist[1]
-            self.__dicelist[1] = temp
+        # Swap dice list.
+        temp = self.__dicelist[0]
+        self.__dicelist[0] = self.__dicelist[1]
+        self.__dicelist[1] = temp
 
-            # Swap bar list.
-            temp = self.__bar[0]
-            self.__bar[0] = self.__bar[1]
-            self.__bar[1] = temp
+        # Swap bar list.
+        temp = self.__bar[0]
+        self.__bar[0] = self.__bar[1]
+        self.__bar[1] = temp
 
 
     def heuristics(self):
         # Evaluate the heuristics value for a specific state
 
         counter = 0
-        if self.__player == Player.CURRENT:
-            for i in range(0,24):
-                counter = counter + i * self.getPlayerAmount(i)
-        else:
-            for i in range(0,24):
-                counter = counter + (23-i) * self.getPlayerAmount(i)
+        for i in range(0,24):
+            val = self.getAmount(i)
+            if val > 0:
+                counter = counter + (24-i) * val
         return counter
 
 
@@ -169,10 +162,10 @@ class GameState(object):
 
             color = "."
             if size < 0:
-                color = "o"
+                color = "-"
                 size = size * -1
             elif size > 0:
-                color = "#"
+                color = "+"
 
             if size > 5:
                 ascii_list[start][x] = str(size);

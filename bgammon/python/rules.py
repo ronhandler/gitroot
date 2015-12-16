@@ -13,7 +13,9 @@ class Rules:
         statelist = []
 
         # TODO: Finish up the function...
-        statelist.append(GameState())
+        newstate = GameState()
+        newstate.movePiece(23,3)
+        statelist.append(newstate)
 
         return statelist
 
