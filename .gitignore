@@ -4,3 +4,4 @@
 **/.exe
 **/a.out
 **/.sconsign.dblite
+**/__pycache__
