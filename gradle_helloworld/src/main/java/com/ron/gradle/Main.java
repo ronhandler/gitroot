@@ -1,3 +1,5 @@
+package com.ron.gradle;
+
 import java.lang.*;
 
 public class Main

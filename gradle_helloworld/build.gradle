@@ -1,3 +1,12 @@
 apply plugin: 'java'
-apply plugin: 'application'
-mainClassName = 'Main'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.ron.gradle.Main'
+    }
+}
+
