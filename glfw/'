@@ -1,0 +1,143 @@
+#pragma once
+
+#include <iostream>
+#include <cstring>
+#include <sstream>
+
+#define GL_GLEXT_PROTOTYPES
+#include <GLFW/glfw3.h>
+
+#include "texture.h"
+
+class App {
+public:
+
+private:
+	bool initialized;
+	GLFWwindow* window;
+
+public:
+	App() {
+		window = NULL;
+		initialized = false;
+	}
+	~App() {
+		glfwTerminate();
+	}
+	// Removing copy constructor and assignment operator.
+	App(App const &) = delete;
+	void operator=(App const &) = delete;
+	// Get the instance of this singleton class.
+	static App &getInstance() {
+		static App instance;
+		return instance;
+	}
+
+	struct Vertex
+	{
+		float x, y;    // Vertex
+		float r, g, b, // Color
+		float s, t;    // Texcoord
+	};
+
+	void start() {
+		if (initialized == false)
+			init();
+
+		unsigned char image[] =
+		{
+			0x00, 0x00, 0x00, 0xFF,
+			0x00, 0xFF, 0x00, 0xFF,
+			0xFF, 0x00, 0x00, 0xFF,
+			0xFF, 0xFF, 0x00, 0xFF
+		};
+		Texture tex(image, 2, 2);
+
+		float vertices[] = {
+		//  Position     
+			-0.5f,  0.5f,
+			 0.5f,  0.5f,
+			 0.5f, -0.5f,
+			-0.5f, -0.5f 
+		};
+		float colors[] = {
+			1.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 1.0f
+		};
+		float texcoords[] = {
+			0.0f, 0.0f,
+			1.0f, 0.0f,
+			1.0f, 1.0f,
+			0.0f, 1.0f
+		}
+		GLuint vbo1, vbo2, vbo3;
+		glGenBuffers(1, &vbo); // Generate 1 buffer
+
+		glGenBuffers(1, &vbo1);
+		glGenBuffers(1, &vbo2);
+		glGenBuffers(1, &vbo3);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		// Pass the vertex pointer.
+		glVertexPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[0]);
+		// Pass the color pointer.
+		glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices[2]);
+		// Pass the texture coords pointer.
+		glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), &vertices[5]);
+
+		while (!glfwWindowShouldClose(window)) {
+			/* Render here */
+			glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glBindTexture(GL_TEXTURE_2D, tex.getId());
+
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+		}
+	}
+
+private:
+
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (action == GLFW_PRESS) {
+			switch (key) {
+			case GLFW_KEY_Q:
+			case GLFW_KEY_ESCAPE:
+				glfwSetWindowShouldClose(window, true);
+				break;
+			}
+		}
+	}
+
+	int init() {
+		if (!glfwInit()) {
+			return -1;
+		}
+		window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+
+		if (!window) {
+			glfwTerminate();
+			return -1;
+		}
+		glfwMakeContextCurrent(window);
+
+		glfwSetKeyCallback(window, key_callback);
+
+		// Enable textures.
+		glEnable(GL_TEXTURE_2D);
+		// Enable the vertex array functionality:
+		glEnableClientState(GL_VERTEX_ARRAY);
+		// Enable the color array functionality (so we can specify a color for each vertex)
+		glEnableClientState(GL_COLOR_ARRAY);
+
+		initialized = true;
+		return 0;
+	}
+};
+

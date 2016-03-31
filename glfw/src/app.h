@@ -4,7 +4,9 @@
 #include <cstring>
 #include <sstream>
 
+#define GL_GLEXT_PROTOTYPES
 #include <GLFW/glfw3.h>
+#include "texture.h"
 
 class App {
 	public:
@@ -19,7 +21,7 @@ class App {
 			initialized = false;
 		}
 		~App() {
-			glfwTerminate();
+			cleanup();
 		}
 		// Removing copy constructor and assignment operator.
 		App(App const &) = delete;
@@ -34,42 +36,38 @@ class App {
 			if (initialized == false)
 				init();
 
-			glEnable(GL_TEXTURE_2D);
-
-			unsigned char image[] =
-			{
-				0x00, 0x00, 0x00, 0xFF,
-				0x00, 0xFF, 0x00, 0xFF,
-				0xFF, 0x00, 0x00, 0xFF,
-				0xFF, 0xFF, 0x00, 0xFF
+			GLfloat vertices[] = {
+				-1, -1, -1,   -1, -1,  1,   -1,  1,  1,   -1,  1, -1,
+				1, -1, -1,    1, -1,  1,    1,  1,  1,    1,  1, -1,
+				-1, -1, -1,   -1, -1,  1,    1, -1,  1,    1, -1, -1,
+				-1,  1, -1,   -1,  1,  1,    1,  1,  1,    1,  1, -1,
+				-1, -1, -1,   -1,  1, -1,    1,  1, -1,    1, -1, -1,
+				-1, -1,  1,   -1,  1,  1,    1,  1,  1,    1, -1,  1
 			};
-			int width=2;
-			int height=2;
-			GLuint tex;
-			glGenTextures(1, &tex);
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			GLfloat colors[] = {
+				0, 0, 0,   0, 0, 1,   0, 1, 1,   0, 1, 0,
+				1, 0, 0,   1, 0, 1,   1, 1, 1,   1, 1, 0,
+				0, 0, 0,   0, 0, 1,   1, 0, 1,   1, 0, 0,
+				0, 1, 0,   0, 1, 1,   1, 1, 1,   1, 1, 0,
+				0, 0, 0,   0, 1, 0,   1, 1, 0,   1, 0, 0,
+				0, 0, 1,   0, 1, 1,   1, 1, 1,   1, 0, 1
+			};
+
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_COLOR_ARRAY);
+
+			glVertexPointer(3, GL_FLOAT, 0, vertices);
+			glColorPointer(3, GL_FLOAT, 0, colors);
 
 			while (!glfwWindowShouldClose(window)) {
-				/* Render here */
+
+				// Render here
 				glClearColor (0.0f, 0.0f, 0.0f, 1.0f);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-				glBindTexture(GL_TEXTURE_2D, tex);
-				glBegin(GL_QUADS);
-				{
-					//glColor3f(1.0, 0.0, 0.0);
-					glTexCoord2f(0.0f, 0.0f); glVertex2f(-0.5f,  0.5f); 
-					glTexCoord2f(1.0f, 0.0f); glVertex2f( 0.5f,  0.5f); 
-					glTexCoord2f(1.0f, 1.0f); glVertex2f( 0.5f, -0.5f); 
-					glTexCoord2f(0.0f, 1.0f); glVertex2f(-0.5f, -0.5f); 
-				}
-				glEnd();
+				//glBindTexture(GL_TEXTURE_2D, tex.getId());
+				glDrawArrays(GL_QUADS, 0, 24);
 
 				glfwSwapBuffers(window);
 				glfwPollEvents();
@@ -104,8 +102,22 @@ class App {
 
 			glfwSetKeyCallback(window, key_callback);
 
+			glEnable(GL_TEXTURE_2D);
+
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+			glDisable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+
+			glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+
 			initialized = true;
 			return 0;
+		}
+		void cleanup() {
+			glDisableClientState(GL_COLOR_ARRAY);
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glfwTerminate();
 		}
 };
 
