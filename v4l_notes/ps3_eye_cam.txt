@@ -1,0 +1,32 @@
+# List the v4l2 controls:
+v4l2-ctl --list-ctrls
+
+# Set the exposure and gain levels:
+v4l2-ctl --set-ctrl exposure=20 
+v4l2-ctl --set-ctrl gain=20
+
+# Start capturing video:
+cvlc --no-audio v4l2:///dev/video0 --v4l2-width 640 --v4l2-height 480 --v4l2-fps 60
+
+
+
+
+Supported resolution/frame-rates:
+
+Resolution  Frame Rate  Notes
+640x480     60    Hz     
+640x480     50    Hz     
+640x480     40    Hz     
+640x480     30    Hz     
+640x480     15    Hz     
+320x240     205   Hz    Experimental
+320x240     187   Hz    Experimental
+320x240     150   Hz    
+320x240     137   Hz    
+320x240     125   Hz    
+320x240     100   Hz    
+320x240     75    Hz     
+320x240     60    Hz     
+320x240     50    Hz     
+320x240     37    Hz     
+320x240     30    Hz     
